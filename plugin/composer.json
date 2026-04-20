@@ -1,0 +1,11 @@
+{
+  "name": "your-name/rag-business-chatbot",
+  "description": "RAG Business Chatbot WordPress plugin",
+  "type": "wordpress-plugin",
+  "require": {
+    "php": ">=7.4"
+  },
+  "autoload": {
+    "classmap": ["includes/"]
+  }
+}

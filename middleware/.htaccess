@@ -1,0 +1,11 @@
+# Route all requests to index.php (required for custom PHP router on Apache)
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [QSA,L]
+
+# Block direct access to sensitive files
+<FilesMatch "^(\.env|composer\.json|composer\.lock|schema\.sql)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>

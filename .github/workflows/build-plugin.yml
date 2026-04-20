@@ -1,0 +1,38 @@
+name: Build plugin ZIP
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          tools: composer
+
+      - name: Install plugin Composer dependencies
+        working-directory: plugin
+        run: composer install --no-dev --optimize-autoloader
+
+      - name: Create plugin ZIP
+        run: |
+          cd plugin
+          zip -r ../rag-business-chatbot.zip . \
+            -x "*.git*" \
+            -x "composer.json" \
+            -x "composer.lock" \
+            -x "*.DS_Store"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: rag-business-chatbot.zip
+          generate_release_notes: true
