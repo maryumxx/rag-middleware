@@ -37,6 +37,7 @@ class Router
                 $method === 'POST' && $path === '/chat'   => $this->handleChat(),
                 $method === 'GET'  && $path === '/status' => $this->handleStatus(),
                 $method === 'GET'  && $path === '/health' => $this->handleHealth(),
+		$method === 'GET'  && $path === '/debug' => $this->handleDebug(),
                 default                                   => $this->json(['error' => 'Not found'], 404),
             };
         } catch (\Throwable $e) {
@@ -295,4 +296,11 @@ PROMPT;
         echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
         exit;
     }
+    private function handleDebug(): void
+{
+    $this->json([
+        'pdo_pgsql_loaded' => extension_loaded('pdo_pgsql'),
+        'pdo_drivers' => \PDO::getAvailableDrivers(),
+    ]);
+}
 }
