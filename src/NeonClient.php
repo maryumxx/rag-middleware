@@ -9,42 +9,26 @@ class NeonClient
     private \PDO $pdo;
 
     public function __construct()
-    {
-        $dsn = $_ENV['NEON_CONNECTION_STRING'] ?? getenv('NEON_CONNECTION_STRING');
-        if (empty($dsn)) {
-            throw new \RuntimeException('NEON_CONNECTION_STRING environment variable is not set.');
-        }
+{
+    $dsn = $_ENV['NEON_CONNECTION_STRING'] ?? getenv('NEON_CONNECTION_STRING');
 
-        // Parse postgresql:// DSN into PDO pgsql: DSN
-        $parsed = parse_url($dsn);
-        if ($parsed === false) {
-            throw new \RuntimeException('Invalid NEON_CONNECTION_STRING format.');
-        }
-
-        $host     = $parsed['host'] ?? '';
-        $port     = $parsed['port'] ?? 5432;
-        $dbname   = ltrim($parsed['path'] ?? '/neondb', '/');
-        $user     = rawurldecode($parsed['user'] ?? '');
-        $password = rawurldecode($parsed['pass'] ?? '');
-        $query    = $parsed['query'] ?? '';
-
-        $sslmode = 'require';
-        if (preg_match('/sslmode=([a-z-]+)/', $query, $m)) {
-            $sslmode = $m[1];
-        }
-
-$pdoDsn = "pgsql:host={$host};port={$port};dbname={$dbname}";
-
-$this->pdo = new \PDO($pdoDsn, $user, $password, [
-    \PDO::ATTR_ERRMODE            => \PDO::ERRMODE_EXCEPTION,
-    \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
-    \PDO::ATTR_TIMEOUT            => 10,
-
-    // 🔥 FORCE SSL FOR NEON
-    \PDO::PGSQL_ATTR_SSL_MODE => 'require',
-]);
+    if (empty($dsn)) {
+        throw new \RuntimeException('NEON_CONNECTION_STRING environment variable is not set.');
     }
 
+    // Convert postgres:// → pgsql:
+    if (str_starts_with($dsn, 'postgresql://')) {
+        $dsn = str_replace('postgresql://', 'pgsql:', $dsn);
+    } elseif (str_starts_with($dsn, 'postgres://')) {
+        $dsn = str_replace('postgres://', 'pgsql:', $dsn);
+    }
+
+    $this->pdo = new \PDO($dsn, null, null, [
+        \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+        \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
+        \PDO::ATTR_TIMEOUT => 10,
+    ]);
+}
     /**
      * Delete existing chunks for a site, then bulk-insert new ones.
      *
