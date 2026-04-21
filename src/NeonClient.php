@@ -33,13 +33,16 @@ class NeonClient
             $sslmode = $m[1];
         }
 
-        $pdoDsn = "pgsql:host={$host};port={$port};dbname={$dbname};sslmode={$sslmode}";
+$pdoDsn = "pgsql:host={$host};port={$port};dbname={$dbname}";
 
-        $this->pdo = new \PDO($pdoDsn, $user, $password, [
-            \PDO::ATTR_ERRMODE            => \PDO::ERRMODE_EXCEPTION,
-            \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
-            \PDO::ATTR_TIMEOUT            => 10,
-        ]);
+$this->pdo = new \PDO($pdoDsn, $user, $password, [
+    \PDO::ATTR_ERRMODE            => \PDO::ERRMODE_EXCEPTION,
+    \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
+    \PDO::ATTR_TIMEOUT            => 10,
+
+    // 🔥 FORCE SSL FOR NEON
+    \PDO::PGSQL_ATTR_SSL_MODE => 'require',
+]);
     }
 
     /**
