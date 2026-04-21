@@ -1,7 +1,10 @@
-```php
 <?php
 
 declare(strict_types=1);
+
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
+ini_set('log_errors', '1');
 
 /**
  * Load .env file for local development
@@ -12,11 +15,11 @@ if (file_exists(__DIR__ . '/.env')) {
     foreach ($lines as $line) {
         $line = trim($line);
 
-        if ($line === '' || str_starts_with($line, '#')) {
+        if ($line === '' || strpos($line, '#') === 0) {
             continue;
         }
 
-        if (str_contains($line, '=')) {
+        if (strpos($line, '=') !== false) {
             [$key, $value] = explode('=', $line, 2);
 
             $key   = trim($key);
@@ -33,9 +36,9 @@ if (file_exists(__DIR__ . '/.env')) {
  */
 foreach ($_SERVER as $key => $value) {
     if (is_string($value) && (
-        str_starts_with($key, 'NEON_') ||
-        str_starts_with($key, 'COHERE_') ||
-        str_starts_with($key, 'ALLOWED_')
+        strpos($key, 'NEON_') === 0 ||
+        strpos($key, 'COHERE_') === 0 ||
+        strpos($key, 'ALLOWED_') === 0
     )) {
         $_ENV[$key] = $value;
         putenv("$key=$value");
@@ -48,4 +51,3 @@ use RAG\Router;
 
 $router = new Router();
 $router->dispatch();
-```
