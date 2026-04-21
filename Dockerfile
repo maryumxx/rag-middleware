@@ -6,4 +6,4 @@ RUN apt-get update && apt-get install -y libpq-dev \
 WORKDIR /app
 COPY . .
 
-CMD ["php", "-S", "0.0.0.0:8080", "index.php"]
+CMD sh -c "php -S 0.0.0.0:$PORT index.php"
