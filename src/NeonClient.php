@@ -8,21 +8,25 @@ class NeonClient
 {
     private \PDO $pdo;
 
-    public function __construct()
+   public function __construct()
 {
     $dsn = $_ENV['NEON_CONNECTION_STRING'] ?? getenv('NEON_CONNECTION_STRING');
+
     error_log("NEON DSN RAW: " . ($dsn ?? 'EMPTY'));
+    error_log("NEON DSN TYPE: " . gettype($dsn));
 
     if (empty($dsn)) {
         throw new \RuntimeException('NEON_CONNECTION_STRING environment variable is not set.');
     }
 
-    // Convert postgres:// → pgsql:
     if (str_starts_with($dsn, 'postgresql://')) {
         $dsn = str_replace('postgresql://', 'pgsql:', $dsn);
     } elseif (str_starts_with($dsn, 'postgres://')) {
         $dsn = str_replace('postgres://', 'pgsql:', $dsn);
     }
+
+    $parsed = parse_url($dsn);
+    error_log("NEON PARSED RESULT: " . json_encode($parsed));
 
     $this->pdo = new \PDO($dsn, null, null, [
         \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
