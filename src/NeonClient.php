@@ -11,6 +11,7 @@ class NeonClient
     public function __construct()
 {
     $dsn = $_ENV['NEON_CONNECTION_STRING'] ?? getenv('NEON_CONNECTION_STRING');
+    error_log("NEON DSN RAW: " . ($dsn ?? 'EMPTY'));
 
     if (empty($dsn)) {
         throw new \RuntimeException('NEON_CONNECTION_STRING environment variable is not set.');
