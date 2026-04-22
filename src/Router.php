@@ -296,11 +296,12 @@ PROMPT;
         echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
         exit;
     }
-    private function handleDebug(): void
+private function handleDebug(): void
 {
     $this->json([
         'pdo_pgsql_loaded' => extension_loaded('pdo_pgsql'),
         'pdo_drivers' => \PDO::getAvailableDrivers(),
     ]);
-}
+} 
+	
 }
